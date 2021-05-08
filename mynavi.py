@@ -32,7 +32,7 @@ def main():
     search_keyword = "高収入"
     # driverを起動
     if os.name == 'nt': #Windows
-        driver = set_driver("chromedriver.exe", True)
+        driver = set_driver("chromedriver.exe", False)
     elif os.name == 'posix': #Mac
         driver = set_driver("chromedriver", False)
     # Webサイトを開く
@@ -56,7 +56,7 @@ def main():
 
     # ページ終了まで繰り返し取得
     exp_name_list = []
-    # 検索結果の一番上の会社名を取得
+    # 検索結果の会社名を取得
     name_list = driver.find_elements_by_class_name("cassetteRecruit__name")
 
     # 1ページ分繰り返し
@@ -64,7 +64,20 @@ def main():
     for name in name_list:
         exp_name_list.append(name.text)
         print(name.text)
+
+    # 検索結果の初年度年収を取得
+    first_income_list = driver.find_elements_by_xpath("//th[@class='tableCondition__head'][contains(text(), '初年度年収')]/following-sibling::td")
+
+    print(len(first_income_list))
+    for first_income in first_income_list:
+      print(first_income.text)
         
+    # 検索結果の給与を取得
+    income_list = driver.find_elements_by_xpath("//th[@class='tableCondition__head'][contains(text(), '給与')]/following-sibling::td")
+
+    print(len(income_list))
+    for income in income_list:
+      print(income.text)
 
 
 # 直接起動された場合はmain()を起動(モジュールとして呼び出された場合は起動しないようにするため)
