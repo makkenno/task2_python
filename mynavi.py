@@ -32,7 +32,7 @@ def main():
     search_keyword = "高収入"
     # driverを起動
     if os.name == 'nt': #Windows
-        driver = set_driver("chromedriver.exe", False)
+        driver = set_driver("chromedriver.exe", True)
     elif os.name == 'posix': #Mac
         driver = set_driver("chromedriver", False)
     # Webサイトを開く
