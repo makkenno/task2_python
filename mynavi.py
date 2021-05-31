@@ -2,6 +2,7 @@ import os
 from selenium.webdriver import Chrome, ChromeOptions
 import time
 import pandas as pd
+import datetime
 
 # Chromeを起動する関数
 
@@ -66,38 +67,43 @@ def main():
 
     print(total_page_number)
 
-    for i in range(total_page_number):
-      # ページ終了まで繰り返し取得
-      exp_name_list = []
-      # 検索結果の会社名を取得
-      name_list = driver.find_elements_by_class_name("cassetteRecruit__name")
 
-      # 1ページ分繰り返し
-      print(len(name_list))
-      for name in name_list:
-          exp_name_list.append(name.text)
-          print(name.text)
+    name_list = []
+    target_list = []
+    workplace_list  = []
+
+    # ページ数分繰り返し
+    for i in range(total_page_number):
+      # 検索結果の会社名を取得
+      name_list_per_page = driver.find_elements_by_class_name("cassetteRecruit__name")
+      for name in name_list_per_page:
+        name_list.append(name.text)
 
       # 検索結果の初年度年収を取得
-      first_income_list = driver.find_elements_by_xpath("//th[@class='tableCondition__head'][contains(text(), '初年度年収')]/following-sibling::td")
-
-      print(len(first_income_list))
-      for first_income in first_income_list:
-        print(first_income.text)
+      target_list_per_page = driver.find_elements_by_xpath("//th[@class='tableCondition__head'][contains(text(), '対象となる方')]/following-sibling::td")
+      for target in target_list_per_page:
+        target_list.append(target.text)
           
       # 検索結果の給与を取得
-      income_list = driver.find_elements_by_xpath("//th[@class='tableCondition__head'][contains(text(), '給与')]/following-sibling::td")
+      workplace_list_per_page = driver.find_elements_by_xpath("//th[@class='tableCondition__head'][contains(text(), '勤務地')]/following-sibling::td")
+      for workplace in workplace_list_per_page:
+        workplace_list.append(workplace.text)
 
-      print(len(income_list))
-      for income in income_list:
-        print(income.text)
-      
       if i == total_page_number - 1:
         break
       
       next_btn = driver.find_element_by_xpath("//li[@class='pager__item--active']/following-sibling::li/a")
       driver.execute_script('arguments[0].click();', next_btn)
       time.sleep(5)
+
+    # CSVへ出力
+    CSV_PATH = "./{search_keyword}_{datetime}.csv"
+    now = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S')
+    df = pd.DataFrame({"会社名":name_list,
+                      "初年度年収":target_list,
+                      "給与":workplace_list})
+    df.to_csv(CSV_PATH.format(search_keyword=search_keyword,datetime=now), encoding="utf-8-sig")
+
 
 
 
