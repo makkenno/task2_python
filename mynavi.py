@@ -4,6 +4,8 @@ import time
 import pandas as pd
 import datetime
 
+now = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S')
+log_file_path = f"./log/log_{now}.log"
 # Chromeを起動する関数
 
 
@@ -26,11 +28,20 @@ def set_driver(driver_path, headless_flg):
     # ChromeのWebDriverオブジェクトを作成する。
     return Chrome(executable_path=os.getcwd() + "/" + driver_path, options=options)
 
+def log(text):
+    now = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S')
+    log_content = f"log: {text} {now}"
+    with open(log_file_path, 'a', encoding='utf-8-sig') as f:
+      f.write(log_content + '\n')
+    print(log_content)
+
 # main処理
 
 
 def main():
+    log("処理開始")
     search_keyword = input("検索ワードを入力してください >>>")
+    log(f"検索ワード： {search_keyword}")
     # driverを起動
     if os.name == 'nt': #Windows
         driver = set_driver("chromedriver.exe", False)
@@ -65,7 +76,7 @@ def main():
     else:
       total_page_number = total_result_number // 50 + 1
 
-    print(total_page_number)
+    log(f"検索対象ページ数：{total_page_number}")
 
 
     name_list = []
@@ -90,6 +101,7 @@ def main():
         workplace_list.append(workplace.text)
 
       if i == total_page_number - 1:
+        log("最終ページ終了")
         break
       
       next_btn = driver.find_element_by_xpath("//li[@class='pager__item--active']/following-sibling::li/a")
@@ -105,7 +117,7 @@ def main():
                         "給与":workplace_list})
       df.to_csv(CSV_PATH.format(search_keyword=search_keyword,datetime=now), encoding="utf-8-sig")
     except:
-      print("CSVファイルに変換することができませんでした。")
+      log("CSVファイルに変換することができませんでした。")
 
 
 
