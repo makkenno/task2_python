@@ -97,12 +97,15 @@ def main():
       time.sleep(5)
 
     # CSVへ出力
-    CSV_PATH = "./{search_keyword}_{datetime}.csv"
-    now = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S')
-    df = pd.DataFrame({"会社名":name_list,
-                      "初年度年収":target_list,
-                      "給与":workplace_list})
-    df.to_csv(CSV_PATH.format(search_keyword=search_keyword,datetime=now), encoding="utf-8-sig")
+    try:
+      CSV_PATH = "./{search_keyword}_{datetime}.csv"
+      now = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S')
+      df = pd.DataFrame({"会社名":name_list,
+                        "初年度年収":target_list,
+                        "給与":workplace_list})
+      df.to_csv(CSV_PATH.format(search_keyword=search_keyword,datetime=now), encoding="utf-8-sig")
+    except:
+      print("CSVファイルに変換することができませんでした。")
 
 
 
