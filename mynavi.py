@@ -3,6 +3,7 @@ from selenium.webdriver import Chrome, ChromeOptions
 import time
 import pandas as pd
 import datetime
+from webdriver_manager.chrome import ChromeDriverManager
 
 now = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S')
 log_file_path = f"./log/log_{now}.log"
@@ -26,7 +27,7 @@ def set_driver(driver_path, headless_flg):
     options.add_argument('--incognito')          # シークレットモードの設定を付与
 
     # ChromeのWebDriverオブジェクトを作成する。
-    return Chrome(executable_path=os.getcwd() + "/" + driver_path, options=options)
+    return Chrome(ChromeDriverManager().install(), options=options)
 
 def log(text):
     now = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S')
