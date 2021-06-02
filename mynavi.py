@@ -4,6 +4,7 @@ import time
 import pandas as pd
 import datetime
 from webdriver_manager.chrome import ChromeDriverManager
+import urllib.parse
 
 now = datetime.datetime.now().strftime('%y-%m-%d-%H-%M-%S')
 log_file_path = f"./log/log_{now}.log"
@@ -61,12 +62,10 @@ def main():
     except:
         pass
     
-    # 検索窓に入力
-    driver.find_element_by_class_name(
-        "topSearch__text").send_keys(search_keyword)
-    # 検索ボタンクリック
-    driver.find_element_by_class_name("topSearch__button").click()
-
+    encoded_search_keyword = urllib.parse.quote(search_keyword)
+    
+    # URLを書き換える
+    driver.get(f"https://tenshoku.mynavi.jp/list/kw{encoded_search_keyword}/?jobsearchType=14&searchType=18")
 
     # 全件数からページ数を計算
     total_result_number = int(driver.find_element_by_xpath("//em").text)
